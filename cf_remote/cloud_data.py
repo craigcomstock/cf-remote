@@ -155,6 +155,12 @@ aws_platforms = {
         'user':'root',
         'size':'m1.small'
     },
+    'windows-2008-x64':{
+        'ami':'ami-0a45c975711b8ff64',
+        'user':'Administrator',
+        'size':'m1.small',
+        'xlsize':'m3.xlarge',
+    },
     'windows-2012-x64':{
         'ami':'ami-045768fc2ae3fa829',
         'user':'Administrator',
