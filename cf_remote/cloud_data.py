@@ -100,6 +100,12 @@ aws_platforms = {
         "user": "ec2-user",
         "xlsize": "m3.xlarge",
     },
+    "rhel-9-x64": {
+        "ami": "ami-078cbc4c2d057c244",
+        "size": "t3a.micro",
+        "user": "ec2-user",
+        "xlsize": "m3.xlarge",
+    },
     "centos-5-x32": {"ami": "ami-fe11398a", "user": "root", "size": "m1.small"},
     "debian-6-x64": {"ami": "ami-879e4ff0", "user": "admin", "size": "t1.micro"},
     "debian-5-x32": {"ami": "ami-8398b3f7", "user": "root", "size": "m1.small"},
