@@ -9,7 +9,7 @@ from libcloud.compute.types import Provider
 from libcloud.compute.providers import get_driver
 from libcloud.compute.base import NodeSize, NodeImage
 
-from cf_remote.cloud_data import aws_platforms, aws_image_criteria, aws_defaults
+from cf_remote.cloud_data import aws_image_criteria, aws_defaults
 from cf_remote.utils import whoami
 from cf_remote import log
 from cf_remote import cloud_data
@@ -311,7 +311,8 @@ def _get_image_criteria(
     # take the middle elements so that debian-9-x64 (version 9)
     # and ubuntu-20-04-x64 (version 20-04) both work
     # this is used in the name_pattern elements of aws_image_criteria
-    platform_version = '-'.join(platform_name.split('-')[1:-1])
+    # ubuntu version 20-04 really needs to be 20.04 so replace - with .
+    platform_version = '-'.join(platform_name.split('-')[1:-1]).replace('-','.')
     platform_with_major_version = '-'.join(platform_name.split('-')[0:2])
     architecture = platform_name.split('-')[-1]
     if architecture == 'x64':
@@ -328,6 +329,10 @@ def _get_image_criteria(
     print(f'CRAIG: _get_image_criteria() returning {criteria}')
     return criteria
 
+# todo might be nice to have a cf-remote --list-images <platform>
+# and we return all images from this and let the caller do the query/sort/take most recent
+# workaround for now is to look at owners in cloud_data.py and execute an aws command like:
+# aws ec2 describe-images --region us-east-2 --owners 801119661308 --query 'Images[*].[Name]' --output text
 def _get_ami(
     criteria,
     driver # refactor, we have self._driver but not used?
@@ -342,6 +347,8 @@ def _get_ami(
             'virtualization-type': 'hvm'
         }
     )
+    if len(candidates) == 0:
+        raise ValueError("No images found for criteria: %s" % (criteria))
     selected = sorted(candidates, key=lambda x: x.extra['creation_date'], reverse=True)[0]
     print(selected)
     return selected.id
