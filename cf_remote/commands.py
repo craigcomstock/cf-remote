@@ -556,6 +556,12 @@ def destroy(group_name=None):
 
 
 def list_platforms():
+    # shall we cache results from provider? For now, No.
+    # still, we want to explicitly set a number of platforms?
+    # at the very least we should set owner-ids for aws AMIs
+    # to search say redhat 8 x86
+    # but first, simple example of using libcloud to find an AMI by search string and ownerid?
+    # https://libcloud.apache.org/
     print("Available platforms:")
     for key in sorted(cloud_data.aws_platforms.keys()):
         print(key)

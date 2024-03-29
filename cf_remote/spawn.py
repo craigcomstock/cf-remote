@@ -9,7 +9,7 @@ from libcloud.compute.types import Provider
 from libcloud.compute.providers import get_driver
 from libcloud.compute.base import NodeSize, NodeImage
 
-from cf_remote.cloud_data import aws_platforms
+from cf_remote.cloud_data import aws_platforms, aws_image_criteria
 from cf_remote.utils import whoami
 from cf_remote import log
 from cf_remote import cloud_data
@@ -297,6 +297,44 @@ def get_cloud_driver(provider, creds, region):
 
     return driver
 
+def _get_image_criteria(
+    platform_name
+):
+    print(f'_get_ami({platform_name})')
+    platform = platform_name.split('-')[0]
+    platform_version = '-'.join(platform_name.split('-')[1:-1])
+    platform_with_major_version = '-'.join(platform_name.split('-')[0:2])
+    architecture = platform_name.split('-')[-1]
+    if architecture == 'x64':
+       architecture = 'x86_64'
+
+    print(f'CRAIG: platform is {platform}')
+    print(f'CRAIG: architecture is {architecture}')
+    # Assign a value to criteria variable based on the given conditions
+    if platform_with_major_version in aws_image_criteria:
+       criteria = aws_image_criteria[platform_with_major_version]
+    else:
+       criteria = aws_image_criteria[platform]
+
+    criteria['architecture'] = architecture
+    criteria['version'] = platform_version
+    return criteria
+
+def _get_ami(
+    criteria,
+    driver # refactor, we have self._driver but not used?
+):
+    candidates = driver.list_images(
+        ex_owner = criteria['owner_id'],
+        ex_filters = {
+            'name': criteria['name_pattern'].format(version=criteria['version']),
+            'architecture': criteria['architecture'],
+            'virtualization-type': 'hvm'
+        }
+    )
+    selected = sorted(candidates, key=lambda x: x.extra['creation_date'], reverse=True)[0]
+    print(selected)
+    return selected.id
 
 def spawn_vm_in_aws(
     platform,
@@ -308,9 +346,13 @@ def spawn_vm_in_aws(
     size=None,
     role=None,
 ):
-    if platform not in aws_platforms:
-        raise ValueError("Platform '%s' does not exist. (Available platforms: %s)" % (platform,
-                         ", ".join(cloud_data.aws_platforms.keys())))
+    platform_name = platform.split('-')[0]
+    if platform_name not in aws_image_criteria:
+        raise ValueError("Platform '%s' is not in our set of image criteria. (Available platforms: %s)" %
+            (platform, ", ".join(cloud_data.aws_image_criteria.keys())))
+#    if platform not in aws_platforms:
+#        raise ValueError("Platform '%s' does not exist. (Available platforms: %s)" % (platform,
+#                         ", ".join(cloud_data.aws_platforms.keys())))
     try:
         driver = get_cloud_driver(Providers.AWS, aws_creds, region)
         existing_vms = driver.list_nodes()
@@ -325,11 +367,16 @@ def spawn_vm_in_aws(
         if any(vm.state in (0, "running") and vm.name == name for vm in existing_vms):
             raise ValueError("VM with the name '%s' already exists" % name)
     aws_platform = aws_platforms[platform]
-    size = size or aws_platform.get("xlsize") or aws_platform["size"]
-    user = aws_platform.get("user")
-    ami = aws_platform["ami"]
+    #size = size or aws_platform.get("xlsize") or aws_platform["size"]
+    #user = aws_platform.get("user")
+    criteria = _get_image_criteria(platform)
+    architecture = criteria['architecture']
+    sizes = criteria['sizes'][architecture]
+    size = sizes.get('size') or sizes.get('xlsize')
+    user = criteria['user']
+    ami = _get_ami(criteria,driver)
 
-    log.info("Spawning new '%s' VM in AWS (AMI: %s, size=%s)" % (platform, ami, size))
+    print("Spawning new '%s' VM in AWS (AMI: %s, size=%s)" % (platform, ami, size))
     node = driver.create_node(
         name=name,
         image=NodeImage(id=ami, name=None, driver=driver),
