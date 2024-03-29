@@ -1,3 +1,10 @@
+# hacks
+
+552 python3 -m venv venv
+553 source venv/bin/activate
+554 pip3 install libcloud
+555 pip3 install apache-libcloud
+
 # cf-remote
 
 `cf-remote` is a tool to deploy CFEngine.
@@ -104,7 +111,7 @@ Waiting for VMs to get IP addresses..........DONE
 Details about the spawned VMs can be found in /home/olehermanse/.cfengine/cf-remote/cloud_state.json
 ```
 
-You can now install nightlies, and use the ```--demo``` to make testing easier (**Not** secure for production use).
+You can now install nightlies, and use the `--demo` to make testing easier (**Not** secure for production use).
 Referring to the group names set by spawn, makes the commands a lot shorter and easier to script:
 
 ```
