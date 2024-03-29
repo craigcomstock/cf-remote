@@ -1,48 +1,26 @@
+aws_defaults = {
+    "sizes": {
+        "x86_64": {
+            "size": "t2.micro",
+            "xlsize": "t2.xlarge",
+        },
+        "arm64": {
+            "size": "t4g.micro",
+            "xlsize": "t4g.xlarge",
+        }
+    },
+    "user": "ec2-user"
+}
 aws_image_criteria = {
-    "suse": {
-        "owner_id":"013907871322",
-        "name_pattern": "suse-sles-{version}*"
-    },
-    "centos-7": {
-        "owner_id":"304194462000",
-        "name_pattern": "centos-{version}-x64"
-    },
-    "rhel": {
-        "owner_id": "309956199498",
-        "name_pattern": "RHEL-{version}*",
-        "size": "t3a.micro",
-        "user": "ec2-user",
-        "xlsize": "m3.xlarge"
-    },
     "debian-9": {
         "owner_id": "379101102735",
         "name_pattern": "debian-stretch-hvm-x86_64*",
         "user": "admin",
-        "size": "t1.micro",
-        "xlsize": "m3.xlarge",
     },
     "debian": {
         "owner_id": "136693071363",
         "name_pattern": "debian-{version}*",
         "user": "admin",
-        "sizes": {
-            "x86_64": {
-                "size": "t1.micro",
-                "xlsize": "m3.xlarge",
-            },
-            "arm64": {
-                "size": "t4g.micro",
-                "xlsize": "t4g.xlarge",
-            }
-        }
-    },
-    "windows": {
-        "owner_id": "801119661308",
-        "name_pattern": "Windows_Server-{version}*"
-    },
-    "macos": {
-        "owner_id": "634519214787",
-        "name_pattern":"amxn-ec2-macos-{version}*"
     },
     "ubuntu-16": {
         "owner_id": "099720109477",
@@ -52,29 +30,31 @@ aws_image_criteria = {
     "ubuntu": {
         "owner_id": "099720109477",
         "name_pattern": "ubuntu/images/hvm-ssd/ubuntu-*-{version}*",
-        "user": "ubuntu"
-    }
+        "user": "ubuntu",
+    },
+    "centos-7": {
+        "owner_id":"304194462000",
+        "name_pattern": "centos-{version}-x64"
+    },
+    "rhel": {
+        "owner_id": "309956199498",
+        "name_pattern": "RHEL-{version}*",
+    },
+    "windows": {
+        "owner_id": "801119661308",
+        "name_pattern": "Windows_Server-{version}*"
+    },
+    "suse": {
+        "owner_id":"013907871322",
+        "name_pattern": "suse-sles-{version}*"
+    },
+    "macos": {
+        "owner_id": "634519214787",
+        "name_pattern":"amxn-ec2-macos-{version}*"
+    },
 }
 
 aws_platforms = {
-    "ubuntu-22-04-arm64": {
-        "ami": "ami-00c50882a52d323a6",
-        "user": "ubuntu",
-        "size": "t4g.micro",
-        "xlsize": "t4g.xlarge",
-    },
-    "ubuntu-22-04-x64": {
-        "ami": "ami-01dd271720c1ba44f",
-        "user": "ubuntu",
-        "size": "t2.small",
-        "xlsize": "t3.xlarge",
-    },
-    "ubuntu-20-04-x64": {
-        "ami": "ami-0aef57767f5404a3c",
-        "user": "ubuntu",
-        "size": "t2.small",
-        "xlsize": "t3.xlarge",
-    },
     "ubuntu-18-04-x64": {
         "ami": "ami-0ee3436f275c4f2e8",
         "user": "ubuntu",
@@ -94,42 +74,6 @@ aws_platforms = {
     },
     "debian-7-x64": {
         "ami": "ami-61e56916",
-        "user": "admin",
-        "size": "t1.micro",
-        "xlsize": "m3.xlarge",
-    },
-    "debian-9-x64": {
-        "ami": "ami-035c67e6a9ef8f024",
-        "user": "admin",
-        "size": "t1.micro",
-        "xlsize": "m3.xlarge",
-    },
-    "debian-10-x64": {
-        "ami": "ami-0a9d04ba7d4df6c3b",
-        "user": "admin",
-        "size": "t1.micro",
-        "xlsize": "m3.xlarge",
-    },
-    "debian-11-arm64": {
-        "ami": "ami-0353cb95279bf4f20",
-        "user": "admin",
-        "size": "t4g.micro",
-        "xlsize": "t4g.xlarge",
-    },
-    "debian-11-x64": {
-        "ami": "ami-0293236c9a0c23a77",
-        "user": "admin",
-        "size": "t1.micro",
-        "xlsize": "m3.xlarge",
-    },
-    "debian-12-arm64": {
-        "ami": "ami-03820227fb3e4ffad",
-        "user": "admin",
-        "size": "t4g.micro",
-        "xlsize": "t4g.xlarge",
-    },
-    "debian-12-x64": {
-        "ami": "ami-07024fbdfd1aab8a0",
         "user": "admin",
         "size": "t1.micro",
         "xlsize": "m3.xlarge",
@@ -191,8 +135,6 @@ aws_platforms = {
     "ubuntu-16-04-x64": {
         "ami": "ami-0d47c52ffe8fef155",
         "user": "ubuntu",
-        "size": "m1.small",
-        "xlsize": "m3.xlarge",
     },
     "debian-5-x64": {"ami": "ami-8f98b3fb", "user": "root", "size": "m1.small"},
     "debian-4-x64": {"ami": "ami-8d98b3f9", "user": "root", "size": "m1.small"},
@@ -219,18 +161,6 @@ aws_platforms = {
     "windows-2019-x64": {
         "ami": "ami-0311c2819c6a29312",
         "user": "Administrator",
-        "size": "t2.small",
-        "xlsize": "t2.xlarge",
-    },
-    "suse-12-x64": {
-        "ami": "ami-0d5622d69a166848b",
-        "user": "ec2-user",
-        "size": "t2.small",
-        "xlsize": "t2.xlarge",
-    },
-    "suse-15-x64": {
-        "ami": "ami-0e5e442298b8e7f5a",
-        "user": "ec2-user",
         "size": "t2.small",
         "xlsize": "t2.xlarge",
     },
