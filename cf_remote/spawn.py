@@ -304,7 +304,8 @@ def get_cloud_driver(provider, creds, region):
 # Generally up-to-date versions should use a generic criteria which pulls the most up to date
 # image for that platform and version.
 def _get_image_criteria(
-    platform_name
+    platform_name,
+    region
 ):
     print(f'_get_ami({platform_name})')
     platform = platform_name.split('-')[0]
@@ -318,9 +319,14 @@ def _get_image_criteria(
     if architecture == 'x64':
        architecture = 'x86_64'
 
+    if 'macos' in platform:
+        architecture += '_mac'
     # Assign a value to criteria variable based on the given conditions
     if platform_with_major_version in aws_image_criteria:
        criteria = aws_image_criteria[platform_with_major_version]
+    # special case, owners change by region for macos, only support eu-west-1 and us-east-2 according to cloud_data.py
+    elif 'macos' in platform:
+       criteria = aws_image_criteria['macos-' + region]
     else:
        criteria = aws_image_criteria[platform]
 
@@ -348,7 +354,7 @@ def _get_ami(
         }
     )
     if len(candidates) == 0:
-        raise ValueError("No images found for criteria: %s" % (criteria))
+        raise ValueError("No images found for criteria: %s in region '%s'" % (criteria, driver.region_name))
     selected = sorted(candidates, key=lambda x: x.extra['creation_date'], reverse=True)[0]
     print(selected)
     return selected.id
@@ -364,7 +370,7 @@ def spawn_vm_in_aws(
     role=None,
 ):
     platform_name = platform.split('-')[0]
-    if platform_name not in aws_image_criteria:
+    if platform_name not in aws_image_criteria and 'macos' not in platform_name:
         raise ValueError("Platform '%s' is not in our set of image criteria. (Available platforms: %s)" %
             (platform, ", ".join(cloud_data.aws_image_criteria.keys())))
     try:
@@ -383,7 +389,7 @@ def spawn_vm_in_aws(
     #aws_platform = aws_platforms[platform]
     #size = size or aws_platform.get("xlsize") or aws_platform["size"]
     #user = aws_platform.get("user")
-    criteria = _get_image_criteria(platform)
+    criteria = _get_image_criteria(platform, region)
     architecture = criteria['architecture'] or aws_defaults['architecture']
     sizes = 'sizes' in criteria and criteria['sizes'] or aws_defaults['sizes']
     small = sizes[architecture]['size']

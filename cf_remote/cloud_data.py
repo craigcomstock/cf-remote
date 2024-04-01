@@ -4,6 +4,10 @@ aws_defaults = {
             "size": "t2.micro",
             "xlsize": "t2.xlarge",
         },
+        "x86_64_mac": {
+            "size": "t2.micro",
+            "xlsize": "t2.xlarge",
+        },
         "arm64": {
             "size": "t4g.micro",
             "xlsize": "t4g.xlarge",
@@ -71,8 +75,14 @@ aws_image_criteria = {
         "owner_id":"013907871322",
         "name_pattern": "suse-sles-{version}*"
     },
-    "macos": {
+    "macos-us-east-2": {
         "owner_id": "634519214787",
-        "name_pattern":"amxn-ec2-macos-{version}*"
+        "name_pattern":"amzn-ec2-macos-{version}*",
+        "region": "us-east-2"
+    },
+    "macos-eu-west-1": {
+      "owner_id": "100343932686",
+        "name_pattern":"amzn-ec2-macos-{version}*",
+        "region": "eu-west-1"
     },
 }

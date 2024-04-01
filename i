@@ -20,10 +20,10 @@ set -ex
 # Windows_Server-2016
 # Windows_Server-2019
 # Windows_Server-2022
-plat=windows
-for version in 2012 2016 2019 2022; do
-  cf-remote spawn --platform $plat-$version-x64 --count 1 --role client --name $plat$version
-done
+#plat=windows
+#for version in 2012 2016 2019 2022; do
+#  cf-remote spawn --platform $plat-$version-x64 --count 1 --role client --name $plat$version
+#done
 # Error: Failed to spawn VMs - Problem spawning 'windows-2016-x64' VM in AWS (AMI: ami-0cea6c34c3dafdcaf, size=t2.micro). Error: UnsupportedOperation: Microsoft SQL Server is not supported for the instance type 't2.micro'.
 # oops! I need to adjust my name_pattern! this gets me Amazon Machine Image (AMI)Windows_Server-2016-Japanese-Full-SQL_2017_Standard-2024.03.13
 # ^^^ I do NOT want Japanese Full SQL
@@ -34,3 +34,10 @@ done
 # that should just come DIRECTLY from criteria with hard-coded ami? or maybe that ami is gone?
 #
 # Error: Failed to spawn VMs - Problem spawning 'windows-2016-x64' VM in AWS (AMI: ami-0cea6c34c3dafdcaf, size=m1.small). Error: Unsupported: The requested configuration is currently not supported. Please check the documentation for supported configurations.
+plat=macos
+for version in 10 11 12 13 14; do
+  cf-remote spawn --platform $plat-$version-x64 --count 1 --role client --name $plat$version
+done
+aws ec2 --region eu-west-1 describe-images --owner 100343932686
+#             "Architecture": "x86_64_mac",
+
