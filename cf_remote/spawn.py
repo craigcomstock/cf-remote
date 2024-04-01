@@ -367,9 +367,6 @@ def spawn_vm_in_aws(
     if platform_name not in aws_image_criteria:
         raise ValueError("Platform '%s' is not in our set of image criteria. (Available platforms: %s)" %
             (platform, ", ".join(cloud_data.aws_image_criteria.keys())))
-#    if platform not in aws_platforms:
-#        raise ValueError("Platform '%s' does not exist. (Available platforms: %s)" % (platform,
-#                         ", ".join(cloud_data.aws_platforms.keys())))
     try:
         driver = get_cloud_driver(Providers.AWS, aws_creds, region)
         existing_vms = driver.list_nodes()
@@ -397,9 +394,11 @@ def spawn_vm_in_aws(
         else:
             size = small or large
     user = 'user' in criteria and criteria['user'] or aws_defaults['user']
-    ami = _get_ami(criteria,driver)
+    ami = 'ami' in criteria and criteria['ami'] or _get_ami(criteria,driver)
+    if 'region' in criteria and region != criteria['region']:
+        raise ValueError("AMI for platform '%s'(%s) is only available in region '%s' and not in your configured region of '%s'." % (platform, ami, criteria['region'], region))
 
-    print("Spawning new '%s' VM in AWS (AMI: %s, size=%s)" % (platform, ami, size))
+    print("Spawning new platform '%s' VM in AWS (AMI: %s, size=%s) %s" % (platform, ami, size, 'note' in criteria and criteria['note']))
     try:
         node = driver.create_node(
             name=name,
