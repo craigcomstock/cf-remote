@@ -438,6 +438,7 @@ def spawn(
         requests.append(
             VMRequest(platform=platform, name=vm_name, size=size, public_ip=public_ip)
         )
+    print("requests %s" % requests)
     print("Spawning VMs...", end="")
     sys.stdout.flush()
     try:
