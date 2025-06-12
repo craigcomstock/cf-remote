@@ -375,6 +375,7 @@ def spawn(
     network=None,
     public_ip=True,
     extend_group=False,
+    dry_run=False,
 ):
     if os.path.exists(CLOUD_CONFIG_FPATH):
         creds_data = read_json(CLOUD_CONFIG_FPATH)
@@ -450,6 +451,7 @@ def spawn(
             network=network,
             role=role,
             spawned_cb=print_progress_dot,
+            dry_run=dry_run,
         )
     except ValueError as e:
         print("\nError: Failed to spawn VMs - " + str(e))

@@ -371,6 +371,7 @@ def spawn_vm_in_aws(
     name=None,
     size=None,
     role=None,
+    dry_run=False,
 ):
     platform_name = platform.split("-")[0]
     if platform_name not in aws_image_criteria:
@@ -407,6 +408,9 @@ def spawn_vm_in_aws(
             % (platform, ami, criteria["region"], region)
         )
 
+    if dry_run:
+        print("Would spawn platform '%s' in AWS (AMI: %s, size=%s) %s" % (platform, ami, size, criteria.get("note","")))
+        return 0
     print(
         "Spawning new platform '%s' VM in AWS (AMI: %s, size=%s) %s"
         % (platform, ami, size, criteria.get("note", ""))
@@ -528,6 +532,7 @@ def spawn_vms(
     network=None,
     role=None,
     spawned_cb=None,
+    dry_run=False,
 ):
     if provider not in (Providers.AWS, Providers.GCP):
         raise ValueError("Unsupported provider %s" % provider)
@@ -549,6 +554,7 @@ def spawn_vms(
                 req.name,
                 req.size,
                 role,
+                dry_run=dry_run,
             )
             if spawned_cb is not None:
                 spawned_cb(vm)
@@ -565,6 +571,7 @@ def spawn_vms(
                 network,
                 req.public_ip,
                 role,
+                dry_run=dry_run,
             )
             for req in vm_requests
         ]

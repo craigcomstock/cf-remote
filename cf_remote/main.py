@@ -241,6 +241,9 @@ def _get_arg_parser():
         + " from some other VM in the same cloud/network!)",
         action="store_true",
     )
+    sp.add_argument(
+        "--dry-run", help="Show what steps would be taken to spawn", type=bool
+    )
     # TODO: --region (optional)
 
     sp = subp.add_parser("show", help="Show hosts spawned by or added to cf-remote")
@@ -378,6 +381,7 @@ def run_command_with_args(command, args):
             network=args.network,
             public_ip=not args.no_public_ip,
             extend_group=args.append,
+            dry_run=args.dry_run,
         )
     elif command == "show":
         return commands.show(args.ansible_inventory)
