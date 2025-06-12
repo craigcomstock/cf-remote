@@ -52,7 +52,6 @@ aws_image_criteria = {
         "note": "This owner is our nt-dev account in AWS so these are private custom images.",
         "owner_id": "304194462000",
         "name_pattern": "centos-{version}-x64",
-        "region": "eu-west-1",
         "user": "centos",
     },
     "rhel": {
